@@ -1,0 +1,123 @@
+<?php
+session_start();
+
+$admin_username = "admin";
+$admin_password = "1010";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    if ($username === $admin_username && $password === $admin_password) {
+        $_SESSION["role"] = "admin";
+    } else {
+        $error = "«”„ «·„” Œœ„ √Ê ﬂ·„… «·”— €Ì— ’ÕÌÕ…";
+    }
+}
+
+if (isset($_GET["action"]) && $_GET["action"] == "visitor") {
+    $_SESSION["role"] = "visitor";
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>‰Ÿ«„ «· ”ÃÌ·</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <?php if (!isset($_SESSION["role"])): ?>
+        <div class="container">
+            <h2> ”ÃÌ· «·œŒÊ·</h2>
+            <?php if (isset($error)): ?>
+                <p style="color: red;"><?php echo $error; ?></p>
+            <?php endif; ?>
+            <form method="POST">
+                <input type="text" name="username" placeholder="«”„ «·„” Œœ„" required>
+                <input type="password" name="password" placeholder="ﬂ·„… «·”—" required>
+                <button type="submit"> ”ÃÌ· «·œŒÊ·</button>
+            </form>
+            <a href="?action=visitor"><button>«·œŒÊ· ﬂ“«∆—</button></a>
+        </div>
+    <?php elseif ($_SESSION["role"] == "admin"): ?>
+        <div class="container">
+            <h2>·ÊÕ… «· Õﬂ„ - «·„œÌ—</h2>
+            <form>
+                <input type="text" id="new-username" placeholder="«”„ «·„” Œœ„ «·ÃœÌœ">
+                <input type="password" id="new-password" placeholder="ﬂ·„… «·”— «·ÃœÌœ…">
+                <button type="button" onclick="addUser()">≈÷«›… „” Œœ„</button>
+            </form>
+            <form>
+                <input type="text" id="delete-username" placeholder="«”„ «·„” Œœ„ ··Õ–›">
+                <button type="button" onclick="deleteUser()">Õ–› „” Œœ„</button>
+            </form>
+        </div>
+    <?php else: ?>
+        <div class="container">
+            <h2>„—Õ»« »ﬂ ﬂ“«∆—</h2>
+            <p>·« Ì„ﬂ‰ﬂ «· Õﬂ„ »√Ì ‘Ì¡.</p>
+        </div>
+    <?php endif; ?>
+
+    <script>
+        function addUser() {
+            const newUsername = document.getElementById("new-username").value;
+            const newPassword = document.getElementById("new-password").value;
+            if (newUsername && newPassword) {
+                alert(` „  ≈÷«›… «·„” Œœ„: ${newUsername}`);
+            } else {
+                alert("«·—Ã«¡ „·¡ Ã„Ì⁄ «·ÕﬁÊ·");
+            }
+        }
+
+        function deleteUser() {
+            const deleteUsername = document.getElementById("delete-username").value;
+            if (deleteUsername) {
+                alert(` „ Õ–› «·„” Œœ„: ${deleteUsername}`);
+            } else {
+                alert("«·—Ã«¡ ≈œŒ«· «”„ „” Œœ„");
+            }
+        }
+    </script>
+</body>
+</html>

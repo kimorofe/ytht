@@ -1,0 +1,88 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# ÈíÇäÇÊ ÇáãÏíÑ
+admin_username = "admin"
+admin_password = "1010"
+
+# æÙíİÉ ÊÓÌíá ÇáÏÎæá
+def login():
+    username = entry_username.get()
+    password = entry_password.get()
+
+    if username == admin_username and password == admin_password:
+        show_admin_panel()
+    else:
+        messagebox.showerror("ÎØÃ", "ÇÓã ÇáãÓÊÎÏã Ãæ ßáãÉ ÇáÓÑ ÛíÑ ÕÍíÍÉ")
+
+# æÙíİÉ ÅÙåÇÑ áæÍÉ ÇáÊÍßã ááãÏíÑ
+def show_admin_panel():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    label = tk.Label(root, text="áæÍÉ ÇáÊÍßã - ÇáãÏíÑ", font=("Arial", 16))
+    label.pack(pady=20)
+
+    # ÅÖÇİÉ ÇÓã ÌÏíÏ
+    tk.Label(root, text="ÇÓã ÇáãÓÊÎÏã ÇáÌÏíÏ:").pack()
+    new_username = tk.Entry(root)
+    new_username.pack()
+
+    tk.Label(root, text="ßáãÉ ÇáÓÑ ÇáÌÏíÏÉ:").pack()
+    new_password = tk.Entry(root, show="*")
+    new_password.pack()
+
+    def add_user():
+        username = new_username.get()
+        password = new_password.get()
+        if username and password:
+            messagebox.showinfo("äÌÇÍ", f"ÊãÊ ÅÖÇİÉ ÇáãÓÊÎÏã: {username}")
+        else:
+            messagebox.showerror("ÎØÃ", "ÇáÑÌÇÁ ãáÁ ÌãíÚ ÇáÍŞæá")
+
+    tk.Button(root, text="ÅÖÇİÉ ãÓÊÎÏã", command=add_user).pack(pady=10)
+
+    # ÍĞİ ãÓÊÎÏã
+    tk.Label(root, text="ÇÓã ÇáãÓÊÎÏã ááÍĞİ:").pack()
+    delete_username = tk.Entry(root)
+    delete_username.pack()
+
+    def delete_user():
+        username = delete_username.get()
+        if username:
+            messagebox.showinfo("äÌÇÍ", f"Êã ÍĞİ ÇáãÓÊÎÏã: {username}")
+        else:
+            messagebox.showerror("ÎØÃ", "ÇáÑÌÇÁ ÅÏÎÇá ÇÓã ãÓÊÎÏã")
+
+    tk.Button(root, text="ÍĞİ ãÓÊÎÏã", command=delete_user).pack(pady=10)
+
+# æÙíİÉ ÅÙåÇÑ áæÍÉ ÇáÒÇÆÑ
+def show_visitor_panel():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    label = tk.Label(root, text="ãÑÍÈğÇ Èß ßÒÇÆÑ", font=("Arial", 16))
+    label.pack(pady=50)
+    tk.Label(root, text="áÇ íãßäß ÇáÊÍßã ÈÃí ÔíÁ.").pack()
+
+# ÅäÔÇÁ ÇáäÇİĞÉ ÇáÑÆíÓíÉ
+root = tk.Tk()
+root.title("äÙÇã ÇáÊÓÌíá")
+root.geometry("400x300")
+
+# ÍŞæá ÇáÅÏÎÇá
+tk.Label(root, text="ÇÓã ÇáãÓÊÎÏã:").pack()
+entry_username = tk.Entry(root)
+entry_username.pack()
+
+tk.Label(root, text="ßáãÉ ÇáÓÑ:").pack()
+entry_password = tk.Entry(root, show="*")
+entry_password.pack()
+
+# ÒÑ ÊÓÌíá ÇáÏÎæá
+tk.Button(root, text="ÊÓÌíá ÇáÏÎæá", command=login).pack(pady=20)
+
+# ÒÑ ÇáÏÎæá ßÒÇÆÑ
+tk.Button(root, text="ÇáÏÎæá ßÒÇÆÑ", command=show_visitor_panel).pack()
+
+root.mainloop()
