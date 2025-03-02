@@ -3,39 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>���� �������</title>
-    <link rel="stylesheet" href="style.css">
+    <title>نموذج بيانات الأسرة</title>
+    <style>
+        /* نفس الأنماط السابقة */
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            text-align: right;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 12px 30px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .buttons .save-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .buttons .save-button:hover {
+            background-color: #218838;
+        }
+        .buttons .record-button {
+            background-color: #007bff;
+            color: white;
+        }
+        .buttons .record-button:hover {
+            background-color: #0056b3;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .records-summary {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            background: #f7f7f7;
+        }
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .record-item:last-child {
+            border-bottom: none;
+        }
+        .record-item button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 5px;
+        }
+        .record-item button.delete-button {
+            background-color: #e74c3c;
+        }
+        .record-item button:hover {
+            background-color: #0056b3;
+        }
+        .record-item button.delete-button:hover {
+            background-color: #c0392b;
+        }
+        .detailed-record {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 15px;
+            background: #fff;
+        }
+        .close-button {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            background-color: #c0392b;
+        }
+        .records-count {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        .close-records-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .close-records-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" id="login-panel">
-        <h2>����� ������</h2>
-        <input type="text" id="username" placeholder="��� ��������">
-        <input type="password" id="password" placeholder="���� ����">
-        <button onclick="login()">����� ������</button>
-        <button onclick="showVisitorPanel()">������ �����</button>
-        <p id="error-message" class="error"></p>
-    </div>
+    <div class="container">
+        <h1>نموذج بيانات الأسرة</h1>
 
-    <div class="container admin-panel" id="admin-panel">
-        <h2>���� ������ - ������</h2>
-        <div class="form-group">
-            <input type="text" id="new-username" placeholder="��� �������� ������">
-            <input type="password" id="new-password" placeholder="���� ���� �������">
-            <button onclick="addUser()">����� ������</button>
+        <div class="records-count" id="recordsCount"></div>
+
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="البحث باستخدام رمز الأسرة أو اسم الزوج أو الزوجة">
+            <button onclick="searchRecord()">بحث</button>
         </div>
-        <div class="form-group">
-            <input type="text" id="delete-username" placeholder="��� �������� �����">
-            <button onclick="deleteUser()">��� ������</button>
+
+        <div class="buttons">
+            <button type="button" class="save-button" onclick="saveData()">حفظ البيانات</button>
+            <button type="button" class="record-button" onclick="viewRecords()">عرض السجل</button>
         </div>
-        <button onclick="logout()">����� ������</button>
+
+        <div id="messageContainer"></div>
+
+        <!-- مكان عرض السجلات -->
+        <div id="recordsDisplay"></div>
+
+        <form id="familyForm">
+            <!-- بيانات الأسرة -->
+            <div class="form-group">
+                <label for="familyCode">رمز الأسرة</label>
+                <input type="text" id="familyCode" name="familyCode">
+            </div>
+
+            <!-- بيانات الزوج -->
+            <div class="form-group">
+                <label for="husbandName">اسم الزوج</label>
+                <input type="text" id="husbandName" name="husbandName">
+            </div>
+            <div class="form-group">
+                <label for="husbandBirthDate">تاريخ ميلاد الزوج</label>
+                <input type="text" id="husbandBirthDate" name="husbandBirthDate">
+            </div>
+            <div class="form-group">
+                <label for="husbandFather">اسم الأب</label>
+                <input type="text" id="husbandFather" name="husbandFather">
+            </div>
+            <div class="form-group">
+                <label for="husbandQualification">المؤهل الدراسي</label>
+                <input type="text" id="husbandQualification" name="husbandQualification">
+            </div>
+            <div class="form-group">
+                <label for="husbandJob">العمل الأساسي</label>
+                <input type="text" id="husbandJob" name="husbandJob">
+            </div>
+            <div class="form-group">
+                <label for="husbandWorkPlace">مكان العمل</label>
+                <input type="text" id="husbandWorkPlace" name="husbandWorkPlace">
+            </div>
+            <div class="form-group">
+                <label for="husbandExtraWork">العمل الإضافي</label>
+                <input type="text" id="husbandExtraWork" name="husbandExtraWork">
+            </div>
+            <div class="form-group">
+                <label for="husbandEmail">البريد الإلكتروني</label>
+                <input type="email" id="husbandEmail" name="husbandEmail">
+            </div>
+            <div class="form-group">
+                <label for="husbandNationalId">الرقم القومي</label>
+                <input type="text" id="husbandNationalId" name="husbandNationalId">
+            </div>
+            <div class="form-group">
+                <label for="husbandDegree">الدرجة الشماسية</label>
+                <input type="text" id="husbandDegree" name="husbandDegree">
+            </div>
+            <div class="form-group">
+                <label for="husbandChurchService">الخدمة الكنسية</label>
+                <input type="text" id="husbandChurchService" name="husbandChurchService">
+            </div>
+            <div class="form-group">
+                <label for="husbandBaptism">تاريخ المعمودية</label>
+                <input type="text" id="husbandBaptism" name="husbandBaptism">
+            </div>
+            <div class="form-group">
+                <label for="husbandEngagementChurch">الخطوبة بكنيسة</label>
+                <input type="text" id="husbandEngagementChurch" name="husbandEngagementChurch">
+            </div>
+
+            <!-- بيانات الزوجة -->
+            <div class="form-group">
+                <label for="wifeName">اسم الزوجة</label>
+                <input type="text" id="wifeName" name="wifeName">
+            </div>
+            <div class="form-group">
+                <label for="wifeBirthDate">تاريخ ميلاد الزوجة</label>
+                <input type="text" id="wifeBirthDate" name="wifeBirthDate">
+            </div>
+            <div class="form-group">
+                <label for="wifeFather">اسم الأب</label>
+                <input type="text" id="wifeFather" name="wifeFather">
+            </div>
+            <div class="form-group">
+                <label for="wifeQualification">المؤهل الدراسي</label>
+                <input type="text" id="wifeQualification" name="wifeQualification">
+            </div>
+            <div class="form-group">
+                <label for="wifeJob">العمل الأساسي</label>
+                <input type="text" id="wifeJob" name="wifeJob">
+            </div>
+            <div class="form-group">
+                <label for="wifeWorkPlace">مكان العمل</label>
+                <input type="text" id="wifeWorkPlace" name="wifeWorkPlace">
+            </div>
+            <div class="form-group">
+                <label for="wifeExtraWork">العمل الإضافي</label>
+                <input type="text" id="wifeExtraWork" name="wifeExtraWork">
+            </div>
+            <div class="form-group">
+                <label for="wifeEmail">البريد الإلكتروني</label>
+                <input type="email" id="wifeEmail" name="wifeEmail">
+            </div>
+            <div class="form-group">
+                <label for="wifeNationalId">الرقم القومي</label>
+                <input type="text" id="wifeNationalId" name="wifeNationalId">
+            </div>
+            <div class="form-group">
+                <label for="wifeDegree">الدرجة الشماسية</label>
+                <input type="text" id="wifeDegree" name="wifeDegree">
+            </div>
+            <div class="form-group">
+                <label for="wifeChurchService">الخدمة الكنسية</label>
+                <input type="text" id="wifeChurchService" name="wifeChurchService">
+            </div>
+            <div class="form-group">
+                <label for="wifeBaptism">تاريخ المعمودية</label>
+                <input type="text" id="wifeBaptism" name="wifeBaptism">
+            </div>
+            <div class="form-group">
+                <label for="wifeEngagementChurch">الخطوبة بكنيسة</label>
+                <input type="text" id="wifeEngagementChurch" name="wifeEngagementChurch">
+            </div>
+
+            <!-- العنوان -->
+            <div class="form-group">
+                <label for="streetName">اسم الشارع</label>
+                <input type="text" id="streetName" name="streetName">
+            </div>
+            <div class="form-group">
+                <label for="neighborhood">الحارة</label>
+                <input type="text" id="neighborhood" name="neighborhood">
+            </div>
+            <div class="form-group">
+                <label for="buildingNumber">رقم العمارة</label>
+                <input type="text" id="buildingNumber" name="buildingNumber">
+            </div>
+        </form>
     </div>
 
-    <div class="container visitor-panel" id="visitor-panel">
-        <h2>������ �� �����</h2>
-        <p>�� ����� ������ ��� ���.</p>
-        <button onclick="logout()">����� ������</button>
-    </div>
+    <script>
+        // إنشاء مفتاح فريد لكل صفحة بناءً على عنوان URL
+        const pageKey = `familyRecords_${window.location.href}`;
 
-    <script src="script.js"></script>
+        // تحميل السجلات المخزنة من Local Storage
+        let records = JSON.parse(localStorage.getItem(pageKey)) || [];
+
+        // تحديث عدد السجلات المحفوظة
+        function updateRecordsCount() {
+            const recordsCount = document.getElementById('recordsCount');
+            recordsCount.textContent = `عدد السجلات المحفوظة: ${records.length}`;
+        }
+
+        // حفظ البيانات في Local Storage
+        function saveData() {
+            const form = document.getElementById('familyForm');
+            const formData = new FormData(form);
+            const record = {};
+            formData.forEach((value, key) => {
+                record[key] = value;
+            });
+            records.push(record);
+            localStorage.setItem(pageKey, JSON.stringify(records));
+            showMessage("تم حفظ البيانات بنجاح!", "success");
+            form.reset();
+            updateRecordsCount();
+        }
+
+        // عرض السجلات
+        function viewRecords() {
+            const recordsDisplay = document.getElementById('recordsDisplay');
+            recordsDisplay.innerHTML = '';
+
+            if (records.length === 0) {
+                showMessage("لا توجد سجلات للعرض.", "error");
+                return;
+            }
+
+            const summary = document.createElement('div');
+            summary.className = 'records-summary';
+
+            records.forEach((record, index) => {
+                const item = document.createElement('div');
+                item.className = 'record-item';
+
+                const info = document.createElement('div');
+                info.textContent = `رمز الأسرة: ${record.familyCode}, الزوج: ${record.husbandName}, الزوجة: ${record.wifeName}`;
+
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'عرض التفاصيل';
+                viewButton.onclick = () => viewDetailedRecord(index);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'حذف';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteRecord(index);
+
+                item.appendChild(info);
+                item.appendChild(viewButton);
+                item.appendChild(deleteButton);
+                summary.appendChild(item);
+            });
+
+            // زر إغلاق عرض السجلات
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق عرض السجلات';
+            closeButton.className = 'close-records-button';
+            closeButton.onclick = () => {
+                recordsDisplay.innerHTML = ''; // إخفاء السجلات
+            };
+
+            recordsDisplay.appendChild(summary);
+            recordsDisplay.appendChild(closeButton);
+        }
+
+        // حذف سجل
+        function deleteRecord(index) {
+            records.splice(index, 1);
+            localStorage.setItem(pageKey, JSON.stringify(records));
+            showMessage("تم حذف السجل بنجاح!", "success");
+            updateRecordsCount();
+            viewRecords(); // تحديث عرض السجلات بعد الحذف
+        }
+
+        // عرض تفاصيل السجل
+        function viewDetailedRecord(index) {
+            const record = records[index];
+            const recordsDisplay = document.getElementById('recordsDisplay');
+            recordsDisplay.innerHTML = '';
+
+            const detailed = document.createElement('div');
+            detailed.className = 'detailed-record';
+
+            for (const key in record) {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = `${key}: ${record[key]}`;
+                detailed.appendChild(paragraph);
+            }
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق';
+            closeButton.className = 'close-button';
+            closeButton.onclick = () => viewRecords();
+
+            detailed.appendChild(closeButton);
+            recordsDisplay.appendChild(detailed);
+        }
+
+        // البحث في السجلات
+        function searchRecord() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const filteredRecords = records.filter(record => 
+                record.familyCode.toLowerCase().includes(searchTerm) ||
+                record.husbandName.toLowerCase().includes(searchTerm) ||
+                record.wifeName.toLowerCase().includes(searchTerm)
+            );
+
+            const recordsDisplay = document.getElementById('recordsDisplay');
+            recordsDisplay.innerHTML = '';
+
+            if (filteredRecords.length === 0) {
+                showMessage("لم يتم العثور على سجلات.", "error");
+                return;
+            }
+
+            const summary = document.createElement('div');
+            summary.className = 'records-summary';
+
+            filteredRecords.forEach((record, index) => {
+                const item = document.createElement('div');
+                item.className = 'record-item';
+
+                const info = document.createElement('div');
+                info.textContent = `رمز الأسرة: ${record.familyCode}, الزوج: ${record.husbandName}, الزوجة: ${record.wifeName}`;
+
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'عرض التفاصيل';
+                viewButton.onclick = () => viewDetailedRecord(index);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'حذف';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteRecord(index);
+
+                item.appendChild(info);
+                item.appendChild(viewButton);
+                item.appendChild(deleteButton);
+                summary.appendChild(item);
+            });
+
+            // زر إغلاق عرض السجلات
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'إغلاق عرض السجلات';
+            closeButton.className = 'close-records-button';
+            closeButton.onclick = () => {
+                recordsDisplay.innerHTML = ''; // إخفاء السجلات
+            };
+
+            recordsDisplay.appendChild(summary);
+            recordsDisplay.appendChild(closeButton);
+        }
+
+        // عرض الرسائل
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'message success' : 'message error';
+            messageDiv.textContent = message;
+            messageContainer.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // تحديث عدد السجلات عند تحميل الصفحة
+        window.onload = function () {
+            updateRecordsCount(); // تحديث عدد السجلات فقط دون عرضها
+        };
+    </script>
 </body>
 </html>
