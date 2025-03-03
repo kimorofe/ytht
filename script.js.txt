@@ -1,0 +1,103 @@
+// ÊÍãíá ŞÇÆãÉ ÇáÓæÑ
+async function loadSurahs() {
+    const response = await fetch('http://api.alquran.cloud/v1/surah');
+    const data = await response.json();
+    const select = document.getElementById('surah-select');
+    data.data.forEach(surah => {
+        const option = document.createElement('option');
+        option.value = surah.number;
+        option.text = surah.name;
+        select.appendChild(option);
+    });
+}
+
+// ÌáÈ ÓæÑÉ ãÍÏÏÉ
+async function fetchSurah() {
+    const surahNumber = document.getElementById('surah-select').value;
+    const response = await fetch(`http://api.alquran.cloud/v1/surah/${surahNumber}`);
+    const data = await response.json();
+    const verses = data.data.ayahs.map(ayah => ayah.text).join('\n');
+    document.getElementById('quran-text').innerText = verses;
+}
+
+// ÌáÈ ÃæŞÇÊ ÇáÕáÇÉ ÈäÇÁğ Úáì ÇáãÏíäÉ
+async function fetchPrayerTimesByCity() {
+    const city = document.getElementById('city-input').value || 'Cairo';
+    const response = await fetch(`http://api.aladhan.com/v1/timingsByCity?city=${city}&country=Egypt&method=2`);
+    const data = await response.json();
+    const timings = data.data.timings;
+    const prayerList = document.getElementById('prayer-list');
+    prayerList.innerHTML = `
+        <li>ÇáİÌÑ: ${timings.Fajr}</li>
+        <li>ÇáÙåÑ: ${timings.Dhuhr}</li>
+        <li>ÇáÚÕÑ: ${timings.Asr}</li>
+        <li>ÇáãÛÑÈ: ${timings.Maghrib}</li>
+        <li>ÇáÚÔÇÁ: ${timings.Isha}</li>
+    `;
+    checkPrayerTime(timings);
+}
+
+// ÊäÈíå æŞÊ ÇáÕáÇÉ
+function checkPrayerTime(timings) {
+    const now = new Date();
+    const prayerCall = document.getElementById('prayer-call');
+    Object.keys(timings).forEach(prayer => {
+        const [hour, minute] = timings[prayer].split(':');
+        if (now.getHours() == hour && now.getMinutes() == minute) {
+            prayerCall.play();
+        }
+    });
+}
+
+// ÍÓÇÈ ÇÊÌÇå ÇáŞÈáÉ
+function drawQiblaDirection(lat, lon) {
+    const canvas = document.getElementById('qibla-direction');
+    const ctx = canvas.getContext('2d');
+    const kaabaLat = 21.4225, kaabaLon = 39.8262;
+    const phi1 = lat * Math.PI / 180, phi2 = kaabaLat * Math.PI / 180;
+    const deltaLambda = (kaabaLon - lon) * Math.PI / 180;
+    const y = Math.sin(deltaLambda);
+    const x = Math.cos(phi1) * Math.tan(phi2) - Math.sin(phi1) * Math.cos(deltaLambda);
+    const qiblaAngle = Math.atan2(y, x) * 180 / Math.PI;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(100, 100, 80, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#2c3e50';
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(100, 100);
+    ctx.rotate(qiblaAngle * Math.PI / 180);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -80);
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+}
+
+// ÚÑÖ ÇáÃĞßÇÑ
+function showAdhkar(type) {
+    const adhkarMorning = "ÓÈÍÇä Çááå æÈÍãÏå (100 ãÑÉ)...";
+    const adhkarEvening = "ÃÚæĞ ÈßáãÇÊ Çááå ÇáÊÇãÇÊ ãä ÔÑ ãÇ ÎáŞ (3 ãÑÇÊ)...";
+    document.getElementById('adhkar-text').innerText = type === 'morning' ? adhkarMorning : adhkarEvening;
+}
+
+// ÌáÈ ÇáÊÇÑíÎ ÇáåÌÑí
+async function fetchHijriDate() {
+    const response = await fetch('http://api.aladhan.com/v1/gToH');
+    const data = await response.json();
+    document.getElementById('hijri-text').innerText = data.data.hijri.date;
+}
+
+// ÊåíÆÉ ÇáÊØÈíŞ
+navigator.geolocation.getCurrentPosition(position => {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    fetchPrayerTimesByCity(); // ÇİÊÑÇÖí ÇáŞÇåÑÉ ÅĞÇ áã íÊã ÅÏÎÇá ãÏíäÉ
+    drawQiblaDirection(lat, lon);
+}, () => fetchPrayerTimesByCity()); // İí ÍÇáÉ ÑİÖ ÊÍÏíÏ ÇáãæŞÚ
+
+loadSurahs();
+fetchHijriDate();

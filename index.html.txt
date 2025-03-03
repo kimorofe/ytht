@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ÿ»Ìﬁ «·„”·„</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1> ÿ»Ìﬁ «·„”·„</h1>
+    </header>
+    <main>
+        <section id="quran">
+            <h2>«·ﬁ—¬‰ «·ﬂ—Ì„</h2>
+            <select id="surah-select"></select>
+            <button onclick="fetchSurah()">⁄—÷ «·”Ê—…</button>
+            <div id="quran-text"></div>
+        </section>
+        <section id="prayer-times">
+            <h2>√Êﬁ«  «·’·«…</h2>
+            <input type="text" id="city-input" placeholder="√œŒ· „œÌ‰ ﬂ («Œ Ì«—Ì)">
+            <button onclick="fetchPrayerTimesByCity()"> ÕœÌÀ</button>
+            <ul id="prayer-list"></ul>
+        </section>
+        <section id="qibla">
+            <h2>« Ã«Â «·ﬁ»·…</h2>
+            <canvas id="qibla-direction" width="200" height="200"></canvas>
+        </section>
+        <section id="adhkar">
+            <h2>«·√–ﬂ«— «·ÌÊ„Ì…</h2>
+            <button onclick="showAdhkar('morning')">√–ﬂ«— «·’»«Õ</button>
+            <button onclick="showAdhkar('evening')">√–ﬂ«— «·„”«¡</button>
+            <div id="adhkar-text"></div>
+        </section>
+        <section id="hijri-date">
+            <h2>«· ﬁÊÌ„ «·ÂÃ—Ì</h2>
+            <div id="hijri-text"></div>
+        </section>
+    </main>
+    <audio id="prayer-call" src="azan.mp3"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
